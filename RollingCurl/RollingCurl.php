@@ -1,55 +1,11 @@
-<?php
-
-/**
- * A cURL library to fetch a large number of resources while maintaining
- * a consistent number of simultaneous connections
- *
- * @package RollingCurl
- * @version 2.0
- * @author Jeff Minard (http://jrm.cc/)
- * @author Josh Fraser (www.joshfraser.com)
- * @author Alexander Makarov (http://rmcreative.ru/)
- * @license Apache License 2.0
- * @link https://github.com/chuyskywalker/rolling-curl
- */
-
 namespace RollingCurl;
-
 use RollingCurl\Request;
-
-
-/**
- * Class that holds a rolling queue of curl requests.
- */
 class RollingCurl
 {
-
-    /**
-     * @var int
-     *
-     * Max number of simultaneous requests.
-     */
     private $simultaneousLimit = 5;
-
-    /**
-     * @var callable
-     *
-     * Callback function to be applied to each result.
-     */
     private $callback;
-
-    /**
-     * @var callable
-     *
-     * Callback function to be called between result processing.
-     */
     private $idleCallback;
 
-    /**
-     * @var array
-     *
-     * Set your base options that you want to be used with EVERY request. (Can be overridden individually)
-     */
     protected $options = array(
         CURLOPT_RETURNTRANSFER => 1,
         CURLOPT_FOLLOWLOCATION => 1,
@@ -57,61 +13,14 @@ class RollingCurl
         CURLOPT_CONNECTTIMEOUT => 30,
         CURLOPT_TIMEOUT        => 30,
     );
+   protected $multicurlOptions = array();
+   private $headers = array();
+   private $pendingRequests = array();
+   private $pendingRequestsPosition = 0;
+   private $activeRequests = array();
+   private $completedRequests = array();
+   private $completedRequestCount = 0;
 
-    /**
-     * @var array
-     *
-     * Set your default multicurl options
-     */
-    protected $multicurlOptions = array();
-
-    /**
-     * @var array
-     */
-    private $headers = array();
-
-    /**
-     * @var Request[]
-     *
-     * Requests queued to be processed
-     */
-    private $pendingRequests = array();
-
-    /**
-     * @var int
-     */
-    private $pendingRequestsPosition = 0;
-
-    /**
-     * @var Request[]
-     *
-     * Requests currently being processed by curl
-     */
-    private $activeRequests = array();
-
-    /**
-     * @var Request[]
-     *
-     * All processed requests
-     */
-    private $completedRequests = array();
-
-    /**
-     * @var int
-     *
-     * A count of executed calls
-     *
-     * While you can count() on pending/active, completed may be cleared.
-     */
-    private $completedRequestCount = 0;
-
-
-    /**
-     * Add a request to the request queue
-     *
-     * @param Request $request
-     * @return RollingCurl
-     */
     public function add(Request $request)
     {
         $this->pendingRequests[] = $request;
@@ -119,16 +28,6 @@ class RollingCurl
         return $this;
     }
 
-    /**
-     * Create new Request and add it to the request queue
-     *
-     * @param string $url
-     * @param string $method
-     * @param array|string $postData
-     * @param array $headers
-     * @param array $options
-     * @return RollingCurl
-     */
     public function request($url, $method = "GET", $postData = null, $headers = null, $options = null)
     {
         $newRequest = new Request($url, $method);
@@ -144,58 +43,22 @@ class RollingCurl
         return $this->add($newRequest);
     }
 
-    /**
-     * Perform GET request
-     *
-     * @param string $url
-     * @param array $headers
-     * @param array $options
-     * @return RollingCurl
-     */
     public function get($url, $headers = null, $options = null)
     {
         return $this->request($url, "GET", null, $headers, $options);
     }
 
-    /**
-     * Perform POST request
-     *
-     * @param string $url
-     * @param array|string $postData
-     * @param array $headers
-     * @param array $options
-     * @return RollingCurl
-     */
     public function post($url, $postData = null, $headers = null, $options = null)
     {
         return $this->request($url, "POST", $postData, $headers, $options);
     }
 
-    /**
-     * Perform PUT request
-     *
-     * @param  string      $url
-     * @param  null        $putData
-     * @param  array       $headers
-     * @param  array       $options
-     *
-     * @return RollingCurl
-     */
     public function put($url, $putData = null, $headers = null, $options = null)
     {
         return $this->request($url, "PUT", $putData, $headers, $options);
     }
 
 
-    /**
-     * Perform DELETE request
-     *
-     * @param  string      $url
-     * @param  array       $headers
-     * @param  array       $options
-     *
-     * @return RollingCurl
-     */
     public function delete($url, $headers = null, $options = null)
     {
         return $this->request($url, "DELETE", null, $headers, $options);
