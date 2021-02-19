@@ -4,7 +4,6 @@ class curl {
 		$this->agent = $this->get_agent(rand(0,44));
 		$this->ch = curl_init();
 		curl_setopt ($this->ch, CURLOPT_USERAGENT, $this->agent);
-		curl_setopt ($this->ch, CURLOPT_HEADER, 1);
 		curl_setopt ($this->ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt ($this->ch, CURLOPT_SSL_VERIFYPEER, 0);
 //	curl_setopt ($this->ch, CURLOPT_SSL_VERIFYHOST, 1);
