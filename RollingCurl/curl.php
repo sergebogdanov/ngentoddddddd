@@ -67,7 +67,6 @@ class curl {
 		return $this->getPage($url, $hasHeader, $hasBody);
 	}	
 	function getPage($url, $hasHeader=true, $hasBody=true) {
-		curl_setopt($this->ch, CURLOPT_HEADER, $hasHeader ? 1 : 0);
 		curl_setopt($this->ch, CURLOPT_NOBODY, $hasBody ? 0 : 1);
 		curl_setopt ($this->ch, CURLOPT_URL, $url);
 		$data = curl_exec ($this->ch);
