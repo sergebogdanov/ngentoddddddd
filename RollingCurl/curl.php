@@ -1,6 +1,6 @@
-class MyCurl {
+class curl {
 	var $ch, $agent, $error, $info, $cookiefile, $savecookie;	
-	function curl() {
+	function MyCurl() {
 		$this->agent = $this->get_agent(rand(0,44));
 		$this->ch = curl_init();
 		curl_setopt ($this->ch, CURLOPT_USERAGENT, $this->agent);
