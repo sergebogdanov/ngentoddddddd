@@ -1,4 +1,4 @@
-class curl {
+class MyCurl {
 	var $ch, $agent, $error, $info, $cookiefile, $savecookie;	
 	function MyCurl() {
 		$this->agent = $this->get_agent(rand(0,44));
